@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+          http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         id="WebApp_ID" version="2.5">
+    <display-name>Archetype Created Web Application</display-name>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    <!--请求和响应的字符串过滤器-->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceResponseEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- 配置spring -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:config/applicationContext.xml</param-value>
+    </context-param>
+    <!-- 使用监听器加载Spring配置文件 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!-- SpringMVC的核心控制器 -->
+    <servlet>
+        <servlet-name>Spring MVC</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:config/springmvc.xml</param-value>
+            <!--<param-value>classpath:SpringMVC/springmvc.xml</param-value>-->
+        </init-param>
+        <!--
+            作为框架的核心组件，在启动过程中有大量的初始化操作要做而这些操作放在第一次请求时才执行会严重影响访问速度
+            因此需要通过此标签将启动控制DispatcherServlet的初始化时间提前到服务器启动时
+        -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Spring MVC</servlet-name>
+        <!--
+            1、/*  拦截所有 jsp js png .css 真的全拦截  建议不使用
+  		    2、*.action  *.do 拦截以do,action结尾的请求 肯定能使用
+  		    3、/  拦截所有（不包括jsp) (包含js,css,png) 强烈建议使用，对静态资源放行
+        -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+</web-app>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- 组件扫描包 -->
+    <context:component-scan base-package="own.cfb.*.controller"/>
+    <!-- 配置不拦截的静态资源 -->
+    <mvc:resources mapping="/css/**" location="/css/"></mvc:resources>
+    <mvc:resources mapping="/img/**" location="/img/"></mvc:resources>
+    <mvc:resources mapping="/js/**" location="/js/"></mvc:resources>
+    <mvc:resources mapping="/html/**" location="/html/"></mvc:resources>
+    <!-- 类型转换器工厂 -->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <!-- 自定义的类型转换器 -->
+                <bean class="own.cfb.converters.MyConverter"></bean>
+            </set>
+        </property>
+    </bean>
+    <!-- 格式化转换器工厂 -->
+    <bean id="formattingConversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set>
+                <!-- 自定义的格式化转换器 -->
+                <bean class="own.cfb.formatters.MyFormatter"></bean>
+            </set>
+        </property>
+        <property name="converters">
+            <set>
+                <!-- 自定义的类型转换器 -->
+                <bean class="own.cfb.converters.MyConverter"></bean>
+            </set>
+        </property>
+    </bean>
+    <!-- 开启注解驱动 -->
+    <mvc:annotation-driven conversion-service="formattingConversionService" >
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+            <!-- JSON 数据转换配置 -->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!-- 处理静态资源,只能访问静态资源，其他请求则无法访问, 所以需开启mvc注解驱动
+        <mvc:default-servlet-handler></mvc:default-servlet-handler>
+    -->
+    <!-- 处理器映射器 -->
+   <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
+    <!-- 处理器适配器 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"></bean>
+    <!-- 视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+    <!-- 拦截器 -->
+    <mvc:interceptors>
+        <bean class="own.cfb.interceptors.MyInterceptor"></bean>
+    </mvc:interceptors>
+    <!-- 异常处理器 -->
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView" value="error"></property>
+        <property name="exceptionAttribute" value="exe"></property>
+        <property name="exceptionMappings">
+            <props>
+                <prop key="own.cfb.exception.SimpleMappingExceptionResolver">error</prop>
+                <prop key="own.cfb.exception.SecondException">error</prop>
+            </props>
+        </property>
+    </bean>
+    <!--配置文件上传解析器-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"></property>
+        <property name="maxUploadSize" value="1024000"></property>
+    </bean>
+</beans>

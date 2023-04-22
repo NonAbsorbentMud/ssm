@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="own.cfb.user.dao.UserDao">
+    <sql id="UserFields">
+        userid,username,password,email,phone,wechatid,qq,idcard,status,createTime,updateTime
+    </sql>
+    <select id="getUserByIdCard" resultType="own.cfb.user.model.Users" parameterType="String">
+        select
+         <include refid="UserFields"></include>
+         from users where idcard=${idCard}
+    </select>
+
+    <select id="getUserByPhone" resultType="own.cfb.user.model.Users" parameterType="java.lang.String">
+        select
+        <include refid="UserFields"></include>
+        from users where phone=${phone}
+    </select>
+
+    <select id="getUserByUserId" resultType="own.cfb.user.model.Users" parameterType="java.lang.Integer">
+        select
+        <include refid="UserFields"></include>
+        from users where userid=${userId}
+    </select>
+</mapper>

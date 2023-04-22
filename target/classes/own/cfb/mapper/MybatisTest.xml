@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="own.cfb.mapper.MybatisTest">
+    <sql id="stuField">stuCode,stuName,teaCode</sql>
+    <select id="getStudentList" resultType="own.cfb.test.model.Student">
+        select <include refid="stuField"></include> from student
+    </select>
+
+    <select id="getStudent" resultType="own.cfb.test.model.Student">
+        select <include refid="stuField"></include> from student where stuCode=#{stuCode,jdbcType=INTEGER}
+    </select>
+
+    <insert id="saveStudentBySelectKey" parameterType="own.cfb.test.model.Student">
+        insert into student(stuName) values(#{stuName,jdbcType=CHAR})
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="stuCode" keyColumn="stuCode">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <insert id="saveStudentByUseGeneratedKeys" parameterType="own.cfb.test.model.Student"
+            useGeneratedKeys="true" keyColumn="stuCode" keyProperty="stuCode">
+        insert into student(stuName) values(#{stuName,jdbcType=CHAR})
+    </insert>
+
+    <insert id="saveStudent" parameterType="own.cfb.test.model.Student">
+        insert into student(stuName) values(#{stuName,jdbcType=CHAR})
+    </insert>
+
+    <update id="updateStudent" parameterType="own.cfb.test.model.Student">
+        update student set stuName=#{stuName} where stuCode=#{stuCode}
+    </update>
+
+    <delete id="deleteStudent" parameterType="own.cfb.test.model.Student">
+        delete from student where stuCode=#{stuCode}
+    </delete>
+
+    <delete id="deleteStudentByStuName" parameterType="java.lang.String">
+        delete from student where stuName=#{stuName}
+    </delete>
+
+    <insert id="saveStudentList" useGeneratedKeys="true" keyProperty="stuCode"
+            parameterType="java.util.List" keyColumn="stuCode">
+        insert into student(stuName) values
+        <foreach collection="list" item="student" separator="," index="index">
+            (#{student.stuName,jdbcType=CHAR})
+        </foreach>
+    </insert>
+
+    <update id="updateStudentList" parameterType="java.util.List">
+        <foreach collection="list" item="student" separator=";">
+            update student set stuName=#{student.stuName} where stuCode=#{student.stuCode}
+        </foreach>
+    </update>
+
+    <delete id="deleteStudentList" parameterType="java.util.List">
+        <foreach collection="list" item="student" separator=";">
+            delete from student where stuCode=#{student.stuCode}
+        </foreach>
+    </delete>
+</mapper>
